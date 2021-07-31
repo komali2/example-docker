@@ -6,15 +6,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import  models
-from .database import SessionLocal, engine
+from .database import SessionLocal, engine, Base
 
 try:
-    models.Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 except:
     print('try SLEEPING')
     time.sleep(14)
-    models.Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.add_middleware(
