@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -19,6 +19,10 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     connect_args={'auth_plugin': 'mysql_native_password'}
 )
+with engine.connect() as conn:
+     result = conn.execute(text("select 'hello world'"))
+     print(result.all())
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
