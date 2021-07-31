@@ -1,6 +1,6 @@
 import time
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from fastapi import FastAPI
@@ -18,19 +18,35 @@ print(port)
 
 SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{username}:{password}@{host}:{port}"
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={'auth_plugin': 'mysql_native_password'}
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine( SQLALCHEMY_DATABASE_URL, connect_args={'auth_plugin': 'mysql_native_password'})
 
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 try:
+    print('attempt 1')
     Base.metadata.create_all(bind=engine)
+    with engine.connect() as conn:
+        result = conn.execute(text("select 'hello world'"))
+        print(result.all())
+
 except:
     print('try SLEEPING')
     time.sleep(14)
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+        with engine.connect() as conn:
+            result = conn.execute(text("select 'hello world'"))
+            print(result.all())
+
+    except:
+        print('try AGIAN SLEEPING')
+        time.sleep(14)
+        Base.metadata.create_all(bind=engine)
+        with engine.connect() as conn:
+            result = conn.execute(text("select 'hello world'"))
+            print(result.all())
+
 
 app = FastAPI()
