@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+ api:
+  build:
+   context: ./backend/
+  ports:
+  - 5000:5000
+  env_file:
+  - .dev.env
+  networks:
+    - local-net
+  depends_on:
+    - mysqldbtest
+
+ mysqldbtest:
+  image: mysql
+  # container_name: "mysqldb"
+  restart: always
+  ports:
+  - 3306:3306
+  env_file:
+  - .dev.env
+  volumes:
+  - mysqltest:/var/lib/mysqltest
+  - mysql_configtest:/etc/mysqltest
+  networks:
+  - local-net
+
+volumes:
+  mysqltest:
+  mysql_configtest:
+
+networks:
+  local-net:
+    driver: bridge
