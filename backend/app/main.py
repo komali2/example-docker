@@ -18,11 +18,17 @@ print(port)
 
 SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{username}:{password}@{host}:{port}"
 
+print('about to create engine')
 engine = create_engine( SQLALCHEMY_DATABASE_URL, connect_args={'auth_plugin': 'mysql_native_password'})
+print('successfully create engine')
 
-
+print('about to make session')
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+print('successfully make session')
+
+print('about to make base')
 Base = declarative_base()
+print('successfully make base')
 
 try:
     print('attempt 1')
@@ -31,8 +37,8 @@ try:
         result = conn.execute(text("select 'hello world'"))
         print(result.all())
 
-except:
-    print('try SLEEPING')
+except Exception as inst:
+    print(f"try SLEEPING, error was {inst}")
     time.sleep(14)
     try:
         Base.metadata.create_all(bind=engine)
